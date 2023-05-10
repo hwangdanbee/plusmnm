@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+ <head>
+    <meta charset="UTF-8">
+	<meta content="yes" name="apple-mobile-web-app-capable" />
+	<meta content="minimum-scale=1.0, width=device-width, maximum-scale=1, user-scalable=no" name="viewport" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="Generator" content="EditPlus®">
+	<meta name="title" content="PLUS M&M">
+	<meta name="Subject" content="PLUS M&M">
+	<meta name="keywords" content="플러스엠앤엠,바이럴 마케팅">
+	<meta name="Descript-xion" content="당신이 원하는 목표, 그 길을 만들어 드리겠습니다.">
+	<meta name="Description" content="당신이 원하는 목표, 그 길을 만들어 드리겠습니다.">
+	<meta name="Publisher" content="PLUS M&M">
+	<meta name="Other Agent" content="ksy">
+	<meta name="Distribution" content="ksy">
+	<meta name="Copyright" content="PLUS M&M">
+	<meta name="Robots" content="ALL">
+	<meta name="Author" content="ksy">
+	<meta property="og:description" content="당신이 원하는 목표, 그 길을 만들어 드리겠습니다.">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="PLUS M&M">
+	<meta property="og:url" content="https://biztopic.kr/test/plus/">
+	<link rel="favicon" href="./favicon.ico">
+
+	<!--Fonts-->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css"></link>
+
+    <!--***STYLE CSS***-->
+    <link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/animate.css">
+
+    <!--***JS***-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-1b93190375e9ccc259df3a57c1abc0e64599724ae30d7ea4c6877eb615f89387.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.2/TweenMax.min.js"></script>
+	<script src="js/wow.js"></script>
+	<script src="js/main.js"></script>
+
+	<script>
+		wow = new WOW(
+		  {
+			animateClass: 'animated',
+			offset:       100,
+			callback:     function(box) {
+			  console.log("WOW: animating <" + box.tagName.toLowerCase() + ">")
+			}
+		  }
+		);
+		wow.init();
+		document.getElementById('moar').onclick = function() {
+		  var section = document.createElement('section');
+		  section.className = 'section--purple wow fadeInDown';
+		  this.parentNode.insertBefore(section, this);
+		};
+	</script>
+
+    <title>PLUS M&M</title>
+
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script>
+        var bSend_ing = false;
+
+        //매체코드
+        $.urlParam = function(name) {
+            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results == null) {
+                return null;
+            } else {
+                return results[1] || 0;
+            }
+        }
+
+        //클릭시 디비연동
+        function input_db(num) {
+            if (!checkForm(num)) {
+                return;
+            }
+
+            if (bSend_ing) {
+                alert("이미 신청하셨습니다.");
+                return;
+            }
+
+			// 모음,자음 차단
+			var chk = $("#name"+num).val();
+				if(chk.match(/([^가-힣\x20])/i)){
+					alert("이름을 정확히 입력해주세요");
+					$('#name'+num).focus();	
+					return;
+				}
+
+
+			// 0, 1로 시작하는 번호 입력 체크
+			if ($("#tel"+num+"-2").val() < 2000) {
+				alert("유효하지 않는 휴대폰번호입니다.");
+				$("#tel"+num+"-2").focus();
+				return false;
+			}
+
+            // 매체코드
+            var pid = "";
+            if ($.urlParam("pid") != null) {
+                pid = $.urlParam("pid");
+            } else {
+                pid = "매체사정보 없음";
+            }
+
+			// 마스터키
+			var ckey = "";
+			if ($.urlParam("ckey") != null)
+				ckey = $.urlParam("ckey");
+
+            // 광고주키
+            var ak = "";
+            if ($.urlParam("ak") != null)
+                ak = $.urlParam("ak");
+
+            // 위시드렙 전송 START
+			$("#ckey").val(ckey);
+            $("#datakind").val("plusm01");
+            $("#ad_key").val(ak);
+            $("#data1").val($("#name" + num).val());
+            $("#data3").val($("#tel" + num).val());
+            $("#data5").val(pid);
+			$("#data6").val($("#company" + num).val()); //회사명
+			$("#data7").val($("#email" + num).val()); //이메일
+			$("#data8").val($("#homepage" + num).val()); //홈페이지주소
+			$("#data9").val($("#field" + num).val()); //문의분야
+			$("#data10").val($("#comment" + num).val());//문의내용
+            $("#referrer").val(document.referrer);
+
+            var l_rndom = new Date().getTime();
+            bSend_ing = true;
+
+            $.ajax({
+                type: "POST",
+                async: false,
+                cache: false,
+                dataType: "jsonp",
+                data: $("#frm").serialize(),
+                url: "https://wr.catad5959.com/api/WCDC_v2.asp" + "?r=" + l_rndom,
+                success: function(sData) {
+                    if (sData.success == "성공") {
+
+                        alert("신청이 정상 처리되었습니다");
+                        location.replace("index.html");
+                    } else if (sData.success == "중복") {
+                        alert("이미 신청 완료된 연락처입니다");
+                        bSend_ing = false;
+                    } else {
+                        alert("신청 접수가 실패했습니다!");
+                        bSend_ing = false;
+                    }
+                },
+                error: function(request, status, error) {
+                    console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+            //위시드렙 전송 END
+        }
+	</script>
+	<script src="/common/common_plus.js"></script>
+
+ </head>
+ <body style="overflow-x: hidden;">
+	<form id="frm" name="frm" method="POST">
+		<input type="hidden" id="ckey" name="ckey" value="">
+		<input type="hidden" id="datakind" name="datakind" value="">
+		<input type="hidden" id="ad_key" name="ad_key" value="">
+		<input type="hidden" id="referrer" name="referrer" value="">
+		<input type="hidden" id="data1" name="data1" value="">
+		<input type="hidden" id="data2" name="data2" value="">
+		<input type="hidden" id="data3" name="data3" value="">
+		<input type="hidden" id="data4" name="data4" value="">
+		<input type="hidden" id="data5" name="data5" value="">
+		<input type="hidden" id="data6" name="data6" value="">
+		<input type="hidden" id="data7" name="data7" value="">
+		<input type="hidden" id="data8" name="data8" value="">
+		<input type="hidden" id="data9" name="data9" value="">
+		<input type="hidden" id="data10" name="data10" value="">
+		<input type="hidden" id="data11" name="data11" value="">
+		<input type="hidden" id="data12" name="data12" value="">
+		<input type="hidden" id="data13" name="data13" value="">
+		<input type="hidden" id="data14" name="data14" value="">
+		<input type="hidden" id="data15" name="data15" value="">
+		<input type="hidden" id="data16" name="data16" value="">
+		<input type="hidden" id="data17" name="data17" value="">
+		<input type="hidden" id="data18" name="data18" value="">
+		<input type="hidden" id="data19" name="data19" value="">
+		<input type="hidden" id="data20" name="data20" value="">
+		<input type="hidden" id="data21" name="data21" value="">
+		<input type="hidden" id="data22" name="data22" value="">
+		<input type="hidden" id="data23" name="data23" value="">
+		<input type="hidden" id="data24" name="data24" value="">
+		<input type="hidden" id="data25" name="data25" value="">
+		<input type="hidden" id="data26" name="data26" value="">
+		<input type="hidden" id="data27" name="data27" value="">
+		<input type="hidden" id="data28" name="data28" value="">
+		<input type="hidden" id="data29" name="data29" value="">
+		<input type="hidden" id="data30" name="data30" value="">
+	</form>
+
+	<header>
+		<div class="wow fadeInUp" data-wow-delay="0.1s">
+			<h1 class="logo"><img src="img/logo.png" alt="플러스M&M"></h1>
+			<div class="info-menu">
+				<ul class="clearfix">
+					<li><a href="download/search_ad.pdf">상품소개서 <span><img src="img/down.png" alt="다운로드"></span></a></li>
+					<li><a href="download/viral_marketing.pdf">회사소개서 <span><img src="img/down.png" alt="다운로드"></span></a></li>
+					<li><a href="#section05">CONTACT</a></li>
+				</ul>
+			</div>
+		</div>
+		
+		<div class="hamburger-mobile">
+			<button id="hamburger-menu" data-toggle="ham-navigation" class="hamburger-menu-button"><span class="hamburger-menu-button-open">Menu</span></button>
+			<nav id="ham-navigation" class="ham-menu">
+				<ul class="menu">
+					<li><a href="https://wecydrep.com/homepage/new/download/wecyd_introduction.pdf">상품소개서 <span class="download-icon"><img src="img/down.png" alt="다운로드"></span></a></li>
+					<li><a href="https://wecydrep.com/homepage/new/download/wecyd_introduction.pdf">회사소개서 <span class="download-icon"><img src="img/down.png" alt="다운로드"></span></a></li>
+					<li><a href="#section05">CONTACT</a></li>
+				</ul>
+			</nav>
+		</div>
+
+	</header>
+
+	<section id="section01" class="sec01">		
+		<div class="fixed-panel">
+			<div class="panel-fix-bg">
+				<div></div>
+			</div>
+		</div>
+		<div id="main-01" class="panel wow fadeInUp" data-wow-delay="0.4s">
+			<div class="panel__content-col">
+				<div class="panel__content">
+					<div id="pan_txt_01" class="panel__text">
+						<img src="img/make2.png" alt="MAKE 당신이 원하는 목표, 그 길을 만들어 드리겠습니다." class="panel__title">
+					</div>
+					<img src="img/phone01.png" alt="휴대폰1" class="panel__line phone01">
+					<div id="pan_txt2_01" class="panel__text2">Marketing & Make</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="main-02" class="panel3">
+			<div class="panel__content-col3">
+				<div class="panel__content3">
+					<div id="pan_txt_02" class="panel__text">
+						<img src="img/message2.png" alt="MAKE 당신이 원하는 목표, 그 길을 만들어 드리겠습니다." class="panel__title">
+					</div>
+					<img src="img/particle1.png" alt="휴대폰1" class="particle_1">
+					<div id="pan_txt2_02" class="panel__text2">Marketing & Message</div>
+					<img src="img/particle2.png" alt="휴대폰1" class="particle_2">
+				</div>
+			</div>
+		</div>
+
+		<div id="main-03" class="panel3">
+			<div class="panel__content-col3">
+				<div class="panel__content3">
+					<div id="pan_txt_03" class="panel__text">
+						<img src="img/motivation2.png" alt="MAKE 당신이 원하는 목표, 그 길을 만들어 드리겠습니다." class="panel__title">
+					</div>
+					<div id="pan_txt2_03" class="panel__text2">Marketing & Motivation</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="section01-m" class="sec01">
+		<div class="fixed-panel2">
+			<div class="panel-fix-bg2">
+				<div></div>
+			</div>
+
+			<div id="main-01-m" class="panel2">
+				<div class="panel__content-m">
+					<div id="pan_txt_01-m">
+						<img src="img/make2.png" alt="MAKE 당신이 원하는 목표, 그 길을 만들어 드리겠습니다." class="panel__title">
+					</div>
+					<div class="wow fadeInUp" data-wow-delay="0.4s" id="pan-ob-01-m"><img src="img/phone01.png" alt="휴대폰1" class="panel__line phone01"></div>
+					<div id="pan-txt-01-m-2" class="panel2__text wow fadeInUp" data-wow-delay="0.2s">Marketing & Make</div> 
+				</div>
+			</div>
+
+			<div id="main-02-m" class="panel2">
+				<div class="panel__content-m">
+					<div id="pan_txt_02-m">
+						<img src="img/message2.png" alt="MAKE 당신이 원하는 목표, 그 길을 만들어 드리겠습니다." class="panel__title">
+					</div>
+					<div id="pan-ob-02-m"><img src="img/particle1.png" alt="공1"></div>
+					<div id="pan-ob-02-m-2"><img src="img/particle2.png" alt="공2"></div>
+					<div id="pan-txt-02-m-2" class="panel2__text">Marketing & Message</div> 
+				</div>
+			</div>
+
+			<div id="main-03-m" class="panel2">
+				<div class="panel__content-m">
+					<div id="pan_txt_03-m">
+						<img src="img/motivation2.png" alt="MAKE 당신이 원하는 목표, 그 길을 만들어 드리겠습니다." class="panel__title">
+					</div>
+					<div id="pan-txt-03-m-2" class="panel2__text">Marketing & Motivation</div> 
+				</div>
+			</div>
+
+
+<!-- 			<div id="main-01-m" class="panel2"> -->
+<!-- 				<div class="panel__content-m"> -->
+<!-- 					<div id="pan_txt_01"> -->
+<!-- 						<img src="img/make2.png" alt="MAKE 당신이 원하는 목표, 그 길을 만들어 드리겠습니다." class="panel__title"> -->
+<!-- 					</div> -->
+<!-- 					<img src="img/phone01.png" alt="휴대폰1" class="panel__line phone01"> -->
+<!-- 					<div id="pan_txt2_01" class="panel__text2">Marketing & Make</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!--  -->
+<!-- 			<div id="main-02-m" class="panel2"> -->
+<!-- 				<div class="panel__content-m"> -->
+<!-- 					<div id="pan_txt_02"> -->
+<!-- 						<img src="img/message2.png" alt="MAKE 당신이 원하는 목표, 그 길을 만들어 드리겠습니다." class="panel__title"> -->
+<!-- 					</div> -->
+<!-- 					<img src="img/particle1.png" alt="휴대폰1" class="particle_1"> -->
+<!-- 					<div id="pan_txt2_02" class="panel__text2">Marketing & Message</div> -->
+<!-- 					<img src="img/particle2.png" alt="휴대폰1" class="particle_2"> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!--  -->
+<!-- 			<div id="main-03-m" class="panel2"> -->
+<!-- 				<div class="panel__content-m"> -->
+<!-- 					<div id="pan_txt_03"> -->
+<!-- 						<img src="img/motivation2.png" alt="MAKE 당신이 원하는 목표, 그 길을 만들어 드리겠습니다." class="panel__title"> -->
+<!-- 					</div> -->
+<!-- 					<div id="pan_txt2_03" class="panel__text2">Marketing & Motivation</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+		</div>
+	</section>
+
+	<section id="section02">
+		<div class="wrapper">
+			<div class="sec-title">
+				<p class="p01 wow fadeInUp" data-wow-delay="0.2s">SEO 최적화</p>
+				<p class="p02 wow fadeInUp" data-wow-delay="0.2s">OPTIMIZATION</p>
+			</div>
+			<div class="optimization-section wow fadeInUp" data-wow-delay="0.4s">
+				<ul class="clearfix">
+					<li><img src="img/naver.png" alt="네이버"><p class="front_img"><img src="img/naver2.png" alt="네이버"></p></li>
+					<li><img src="img/kakao.png" alt="카카오"><p class="front_img"><img src="img/kakao2.png" alt="카카오"></p></li>
+					<li><img src="img/google.png" alt="구글"><p class="front_img"><img src="img/google2.png" alt="구글"></p></li>
+					<li><img src="img/youtube.png" alt="유튜브"><p class="front_img"><img src="img/youtube2.png" alt="유튜브"></p></li>
+					<li><img src="img/instagram.png" alt="인스타그램"><p class="front_img"><img src="img/instagram2.png" alt="인스타그램"></p></li>
+					<li><img src="img/telegram.png" alt="텔레그램"><p class="front_img"><img src="img/telegram2.png" alt="텔레그램"></p></li>
+					<li><img src="img/facebook.png" alt="페이스북"><p class="front_img"><img src="img/facebook2.png" alt="페이스북"></p></li>
+					<li><img src="img/twitter.png" alt="트위터"><p class="front_img"><img src="img/twitter2.png" alt="트위터"></p></li>
+					<li><img src="img/tiktok.png" alt="틱톡"><p class="front_img"><img src="img/tiktok2.png" alt="틱톡"></p></li>
+				</ul>
+			</div>
+			<div class="quick-btn">
+				<a href="#section05">Contact Us</a>
+			</div>
+		</div>
+	</section>
+
+	<section id="section03">
+		<div class="wrapper">
+			<div class="sec-title">
+				<p class="p01 wow fadeInUp" data-wow-delay="0.2s">SNS 채널관리</p>
+				<p class="p02 wow fadeInUp" data-wow-delay="0.3s"">CHANNEL MANAGEMENT</p>
+			</div>
+			<div class="channel-section">
+				<ul class="tab-menu wow fadeInUp" data-wow-delay="0.4s">
+					<li><a href="#insta">인스타그램</a></li>
+					<li><a href="#youtube">유튜브</a></li>
+					<li><a href="#faceboock">페이스북</a></li>
+					<li><a href="#tiktok">틱톡</a></li>
+				</ul>
+				
+				<ul class="tab-contents wow fadeInUp" data-wow-delay="0.6s">
+					<li id="insta" class="tab">
+						<div class="tab-inner clearfix">
+							<div class="tab-text-section">
+								<p class="tab-txt-01">인스타그램</p>
+								<p class="tab-txt-02">
+									빅데이터를 기반으로 시장의 흐름을 파악하여 체계적이고<br>
+									세분화 된 마케팅을 기획해드립니다.
+								</p>
+								<p class="tab-txt-03">
+									개선된 콘텐츠를 바탕으로 재방문 수치를 높여주어 인사이트가<br>
+									상승하고 자연스럽게 계정도 성장합니다.
+								</p>
+							</div>
+							<div class="tab-image-section">
+								<img src="img/insta-img.png" alt="인스타이미지">
+							</div>
+						</div>
+					</li>
+					<li id="youtube" class="tab">
+						<div class="tab-inner clearfix">
+							<div class="tab-text-section">
+								<p class="tab-txt-01">유튜브</p>
+								<p class="tab-txt-02">
+									유튜브 데이터를 기반으로 효과적인 유튜브 채널운영을 통해<br>
+									유튜브 마케팅 성공을 도와드립니다.
+								</p>
+								<p class="tab-txt-03">
+									마케팅 목표에 맞는 광고상품, 입찰전략 및 타켓팅 솔루션을<br>
+									제공해드립니다.
+								</p>
+							</div>
+							<div class="tab-image-section">
+								<img src="img/youtube-img.png" alt="인스타이미지">
+							</div>
+						</div>
+					</li>
+					<li id="faceboock" class="tab">
+						<div class="tab-inner clearfix">
+							<div class="tab-text-section">
+								<p class="tab-txt-01">페이스북</p>
+								<p class="tab-txt-02">
+									빅데이터를 기반으로 시장의 흐름을 파악하여 체계적이고<br>
+									세분화 된 마케팅을 기획해드립니다.
+								</p>
+								<p class="tab-txt-03">
+									개선된 콘텐츠를 바탕으로 재방문 수치를 높여주어 인사이트가<br>
+									상승하고 자연스럽게 계정도 성장합니다.
+								</p>
+							</div>
+							<div class="tab-image-section">
+								<img src="img/facebook-img2.png" alt="페이스북">
+							</div>
+						</div>
+					</li>
+					<li id="tiktok" class="tab">
+						<div class="tab-inner clearfix">
+							<div class="tab-text-section">
+								<p class="tab-txt-01">틱톡</p>
+								<p class="tab-txt-02">
+									전 세계인이 사용하는 글로벌 플랫폼<br>
+									자연스러운 홍보 효과와 인지도 상승을 도와드립니다
+								</p>
+							</div>
+							<div class="tab-image-section">
+								<img src="img/tiktok-img3.png" alt="인스타이미지">
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<section id="section04">
+		<div class="wrapper">
+			<div class="sec-title">
+				<p class="p01 wow fadeInUp" data-wow-delay="0.2s">클라이언트</p>
+				<p class="p02 wow fadeInUp" data-wow-delay="0.3s">Client</p>
+			</div>
+			<div class="portfolio-list wow fadeInUp" data-wow-delay="0.5s">
+				<ul class="pl-inner clearfix">
+					<li><div><img src="img/logo_1.png"></div></li>
+					<li><div><img src="img/logo_2.png"></div></li>
+					<li><div><img src="img/logo_3.png"></div></li>
+					<li><div><img src="img/logo_4.png"></div></li>
+					<li><div><img src="img/logo_5.png"></div></li>
+					<li><div><img src="img/logo_6.png"></div></li>
+					<li><div><img src="img/logo_7.png"></div></li>
+					<li><div><img src="img/logo_8.png"></div></li>
+					<li><div><img src="img/logo_9.png"></div></li>
+					<li><div><img src="img/logo_10.png"></div></li>
+					<li><div><img src="img/logo_11.png"></div></li>
+					<li><div><img src="img/logo_12.png"></div></li>
+					<li><div><img src="img/logo_13.png"></div></li>
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<section id="section05">
+		<div class="wrapper">
+			<div id="db_wrap" class="sec05-title wow fadeInLeft" data-wow-delay="0.4s">
+				<h2>CONTACT US</h2>
+				<p class="sec05-p1">문의주신 내용에 대해 신속히 회신드리겠습니다.</p>
+				<p class="sec05-p2"><span class="info-tit">ADRESS</span> 서울특별시 구로구 디지털로33길 11, 505호</p>
+				<p class="sec05-p3"><span class="info-tit">E-MAIL</span> jdd@wecyd.com</p>
+				<p class="sec05-p4"><span class="info-tit">TEL</span>1577-8705</p>
+			</div>
+			<div class="sec05-form-container wow fadeInLeft" data-wow-delay="0.6s">
+				<table>
+					<tbody>
+						<tr>
+							<td><input type="text" name="name1" id="name1" onkeyup="onlyKorean(this);" maxlength="5" placeholder="이름"></td>
+							<td class="input_w2"><input type="text" name="company1" id="company1" onkeyup="specialCharRemove2(this);" maxlength="20" placeholder="회사명 (선택)"></td>
+						</tr>
+						<tr>
+							<td><input type="tel" name="tel1" id="tel1" class="tel-check" onkeydown="return onlyNumber(event)" onkeyup="removeChar(event)" maxlength="11" placeholder="연락처"></td>
+							<td class="input_w2"><input type="text" name="email1" id="email1" onkeyup="specialCharRemove3(this);" maxlength="30" placeholder="이메일"></td>
+						</tr>
+						<tr>
+							<td><input type="text" name="homepage1" id="homepage1" maxlength="70" placeholder="홈페이지 주소"></td>					
+							<td class="input_w2">							
+								<select name="field1" id="field1">
+									<option value="바이럴광고">바이럴광고</option>
+									<option value="SNS광고">SNS광고</option>
+									<option value="채널관리">채널관리</option>
+									<option value="마케팅컨설팅">마케팅컨설팅</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2"><input type="text" name="comment1" id="comment1" cols="50" rows="10" onkeyup="specialCharRemove2(this);" maxlength="150" placeholder="문의내용" style="width:95%;"></td>
+						</tr>
+						<tr>
+							<td colspan="2" style="font-size:13px;">
+								<label><input type="checkbox" id="agree1-1" name="agree1-1" class="check_input" checked="checked" >개인정보취급방침에 동의</label>
+								<a style="cursor:pointer;" onclick="policy();">[약관보기]</a>
+								<label style="display:none;"><input type="checkbox" id="agree1-2" name="agree1-2" checked="checked" class="check_input">마케팅수신 동의</label>
+							</td>
+						</tr>
+						<tr class="send-btn">
+							<td colspan="2">
+								<div onclick="input_db(1)">SEND</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</section>
+
+	<footer>
+		<div class="wrapper">
+			<div class="footer-container">
+				<div class="footer-logo"><img src="img/logo.png" alt="플러스M&M" width="80%"></div>
+				<p class="foot-p1">
+				<b style="font-weight:bold;">플러스엠앤엠</b><br><br>
+				사업자등록번호 342-88-01615 &nbsp;&nbsp;| &nbsp;&nbsp;대표번호 1577-8705<br>
+				통신판매업신고번호 서울특별시 구로구 디지털로33길 11, 에이스테크노타워 8차 505호</p>
+				<p class="foot-p2">Copyrightⓒ2021 WEcyd Co.,Ltd. All Rights Reserved.</p>
+			</div>
+		</div>
+	</footer>
+
+ </body>
+</html>
